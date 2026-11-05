@@ -1,34 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Talixora — official website
 
-## Getting Started
+Website for **Talixora**: makers of **Sellix** (ERPs for real estate, eateries and enterprise POS) and
+**Bidchale** (an online bidding marketplace), and providers of software consultancy and dedicated developers.
 
-First, run the development server:
+Built with Next.js 14 (App Router), TypeScript, Tailwind CSS, Material Tailwind, Ant Design and Framer Motion.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+npm install          # if NODE_ENV=production is set in your shell, use: npm install --include=dev
+npm run dev          # http://localhost:3000
+npm run build
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where to edit content
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Most copy lives in [`src/data/talixora.ts`](src/data/talixora.ts):
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+| What | Export |
+| --- | --- |
+| Company name, email, location, social links | `company` |
+| Sellix modules and shared core | `sellixModules`, `sellixCore` |
+| Bidchale | `bidchale` |
+| Services and engagement models (project / part of a project / developer on request) | `services`, `engagementModels` |
+| Team | `team` |
+| FAQs (Why Talixora page) | `faqs` |
+| Contact form categories and budgets | `enquiryCategories`, `budgetRanges` |
 
-## Learn More
+Navigation menus are in [`src/components/navbar.tsx`](src/components/navbar.tsx) and footer links in
+[`src/components/footer.tsx`](src/components/footer.tsx).
 
-To learn more about Next.js, take a look at the following resources:
+## Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Route | Page |
+| --- | --- |
+| `/` | Home — products, Sellix modules, Bidchale, services, process, technologies, work with us |
+| `/whytalixora` | Why Talixora — FAQs, benefits, team (`/whybytewave` redirects here) |
+| `/about` | About — who we are, what we do, team |
+| `/contactUs` | Contact form (supports `?category=` and `?role=` to pre-fill) |
+| `/signIn`, `/admin` | Sign-in and admin dashboard |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Structure
 
-## Deploy on Vercel
+```
+src/
+  app/          routes (App Router)
+  components/   UI sections and templates (moved out of src/pages, which Next treats as routes)
+  data/         site content (talixora.ts) and admin grid columns
+  interfaces/   shared TypeScript types
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Forms
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The contact and "Work with us" forms currently open the visitor's email client with a pre-filled message to
+`company.email`. To store enquiries server-side, replace the `onFinish` handlers with a call to an API route or form service.

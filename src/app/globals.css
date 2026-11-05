@@ -2,40 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
-
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html,
+  body {
+    /* Decorative glows must never cause sideways scrolling on phones. */
+    overflow-x: clip;
+  }
+
+  body {
+    @apply bg-white text-ink-900 antialiased;
+    /* Set explicitly: Material Tailwind (admin portal) overrides the default sans stack. */
+    font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  ::selection {
+    @apply bg-brand-500/20 text-ink-900;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
-body {
-  /* color: rgb(var(--foreground-rgb)); */
-  color: black;
-  background: linear-gradient(
-      to bottom,
-      /* transparent, */
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@layer components {
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-brand-600;
+  }
 
+  .h-display {
+    @apply font-display font-semibold tracking-[-0.03em] text-balance;
+  }
 
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-400 via-brand-300 to-mint-300 bg-clip-text text-transparent;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-soft;
+  }
+
+  .card-dark {
+    @apply rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur;
+  }
 }
 
-
-#stroke-text::before {
-    color : "#000";
-    -webkit-text-fill-color : transparent;
-    -webkit-text-stroke-width: 2px;
-    
-    /* background-color: blueviolet; */
-    
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .mask-fade-x {
+    mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  }
+
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 55%, transparent);
+  }
+
+  .mask-radial {
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 72%);
+  }
+}
