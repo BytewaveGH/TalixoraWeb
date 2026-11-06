@@ -25,30 +25,32 @@ module.exports = withMT({
         sky: colors.sky,
         violet: colors.violet,
         amber: colors.amber,
-        // Talixora
+        // Talixora navy — dark surfaces, tuned toward the logo navy (#011149)
         ink: {
-          950: '#070A14',
-          900: '#0B1020',
-          800: '#141A2E',
-          700: '#1F2740',
-          600: '#2E3754',
+          950: '#040A1F',
+          900: '#071233',
+          800: '#0F1B42',
+          700: '#1A2652',
+          600: '#2A3766',
         },
+        // Talixora brand blue — matched to the logo (#0070FF bright blue, #011149 navy)
         brand: {
-          50: '#EEF0FF',
-          100: '#DFE2FF',
-          200: '#C2C7FF',
-          300: '#9BA1FF',
-          400: '#7A7CFB',
-          500: '#5D5AF2',
-          600: '#4B42DE',
-          700: '#3E35BB',
-          800: '#332E96',
-          900: '#2D2B77',
+          50: '#EEF5FF',
+          100: '#D9E8FF',
+          200: '#B5D2FF',
+          300: '#7FB2FF',
+          400: '#3D8BFF',
+          500: '#0A6CF5',
+          600: '#0052D6',
+          700: '#0041AD',
+          800: '#023489',
+          900: '#011E5C',
         },
+        // Accent cyan — matched to the logo's light end (#00CEFC)
         mint: {
-          300: '#7FF0DA',
-          400: '#3EDDC0',
-          500: '#17C3A6',
+          300: '#7EE7FF',
+          400: '#1FD0FB',
+          500: '#00B4E6',
         },
         // Product brands
         sellix: {
@@ -67,14 +69,14 @@ module.exports = withMT({
       boxShadow: {
         soft: '0 1px 2px rgba(16,24,40,.04), 0 8px 24px -6px rgba(16,24,40,.08)',
         lift: '0 2px 4px rgba(16,24,40,.04), 0 24px 48px -12px rgba(16,24,40,.18)',
-        glow: '0 0 0 1px rgba(122,124,251,.25), 0 20px 60px -15px rgba(93,90,242,.55)',
+        glow: '0 0 0 1px rgba(61,139,255,.25), 0 20px 60px -15px rgba(10,108,245,.55)',
       },
       backgroundImage: {
         'grid-light':
           'linear-gradient(to right, rgba(15,23,42,.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,.06) 1px, transparent 1px)',
         'grid-dark':
           'linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px)',
-        'sellix-gradient': 'linear-gradient(135deg, #9B35F2 0%, #5D5AF2 50%, #16A5F0 100%)',
+        'sellix-gradient': 'linear-gradient(135deg, #9B35F2 0%, #6A4CF0 50%, #16A5F0 100%)',
       },
       keyframes: {
         marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },

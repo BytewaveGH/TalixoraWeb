@@ -6,7 +6,7 @@ export function SellixLogo({ className, size = 'md' }: { className?: string; siz
   const mark = size === 'lg' ? 44 : size === 'sm' ? 24 : 32
   return (
     <span className={cn('inline-flex items-center gap-2', className)}>
-      <Image src="/images/brand/sellix-mark.png" alt="" width={mark} height={mark} className="shrink-0" />
+      <Image src="/images/brand/sellix-mark-96.png" alt="" width={mark} height={mark} className="shrink-0" />
       <span
         className={cn(
           'bg-gradient-to-r from-sellix-purple to-sellix-blue bg-clip-text font-display font-bold tracking-tight text-transparent',

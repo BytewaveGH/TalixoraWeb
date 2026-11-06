@@ -16,6 +16,7 @@ import {
 import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/reveal'
 import { BidchaleAuction } from '@/components/mockups/bidchale-auction'
+import { BIDCHALE_LISTINGS_URL, getBidchaleLots } from '@/lib/bidchale'
 import { BidchaleLogo } from '@/components/product-logos'
 import { Faq } from '@/components/faq'
 import { bidchale, links } from '@/content/site'
@@ -61,7 +62,23 @@ function YellowLink({ href, children }: { href: string; children: React.ReactNod
   )
 }
 
-export default function BidchalePage() {
+// Re-check Bidchale for new listings every 5 minutes.
+export const revalidate = 300
+
+const endFormatter = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Africa/Accra',
+  day: 'numeric',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+})
+
+function money(n: number) {
+  return 'GH₵ ' + n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 })
+}
+
+export default async function BidchalePage() {
+  const lots = await getBidchaleLots(8)
   return (
     <>
       {/* Hero */}
@@ -98,13 +115,73 @@ export default function BidchalePage() {
             </ul>
           </Reveal>
           <Reveal delay={0.12} y={30} className="mx-auto w-full max-w-md">
-            <BidchaleAuction />
+            <BidchaleAuction lots={lots} />
           </Reveal>
         </div>
       </section>
 
+      {/* Live listings (from the Bidchale API, refreshed every 5 minutes) */}
+      {lots.length > 0 && (
+        <Section tone="muted" id="live" className="scroll-mt-20">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <SectionHeading
+              eyebrow="Live on Bidchale"
+              title="On the block right now."
+              description="Real listings, straight from bidchale.com — updated automatically as vendors add new items."
+            />
+            <Reveal>
+              <YellowLink href={BIDCHALE_LISTINGS_URL}>See all items</YellowLink>
+            </Reveal>
+          </div>
+          <ul className={`mt-12 grid gap-5 sm:grid-cols-2 ${lots.length >= 4 ? 'lg:grid-cols-4' : lots.length === 3 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
+            {lots.slice(0, 4).map((l, i) => {
+              const upcoming = l.startsAt ? new Date(l.startsAt).getTime() > Date.now() : false
+              return (
+                <li key={l.id}>
+                  <Reveal delay={i * 0.05} className="h-full">
+                    <a
+                      href={l.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:shadow-lift"
+                    >
+                      <div className="relative aspect-square overflow-hidden bg-neutral-100">
+                        <Image src={l.image} alt={l.title} fill sizes="(min-width: 1024px) 280px, (min-width: 640px) 45vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <span className="absolute left-3 top-3 rounded-full bg-bidchale-black px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+                          {upcoming ? 'Upcoming' : 'Live'}
+                        </span>
+                      </div>
+                      <div className="flex flex-1 flex-col p-4">
+                        <p className="text-xs text-slate-500">{l.category}</p>
+                        <h3 className="mt-1 line-clamp-2 font-semibold leading-snug text-ink-900">{l.title}</h3>
+                        <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+                          <div>
+                            <p className="text-[11px] text-slate-500">{l.bidCount > 0 ? 'Current bid' : 'Starting bid'}</p>
+                            <p className="font-display text-lg font-bold tabular-nums text-ink-900">{money(l.currentBid)}</p>
+                          </div>
+                          {l.buyNowPrice && (
+                            <p className="rounded-full bg-bidchale-50 px-2.5 py-1 text-[11px] font-semibold text-black ring-1 ring-bidchale-yellow/50">
+                              Buy now {money(l.buyNowPrice)}
+                            </p>
+                          )}
+                        </div>
+                        {l.endsAt && (
+                          <p className="mt-3 border-t border-slate-100 pt-3 text-xs text-slate-500">
+                            {upcoming && l.startsAt ? 'Starts ' + endFormatter.format(new Date(l.startsAt)) : 'Ends ' + endFormatter.format(new Date(l.endsAt))}
+                          </p>
+                        )}
+                      </div>
+                    </a>
+                  </Reveal>
+                </li>
+              )
+            })}
+          </ul>
+        </Section>
+      )}
+
       {/* How it works */}
-      <Section>
+      <Section id="how-it-works" className="scroll-mt-20">
         <SectionHeading align="center" eyebrow="How it works" title="Simple, transparent and secure." />
         <div className="relative mt-16">
           <div aria-hidden="true" className="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent md:block" />
@@ -144,7 +221,7 @@ export default function BidchalePage() {
       </Section>
 
       {/* Categories */}
-      <Section>
+      <Section id="categories" className="scroll-mt-20">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeading eyebrow="Shop by category" title="Thousands of items, every day." />
           <Reveal>
@@ -173,7 +250,7 @@ export default function BidchalePage() {
       </Section>
 
       {/* Payments & protection */}
-      <section className="relative isolate overflow-hidden bg-bidchale-black py-20 text-white sm:py-28">
+      <section id="protection" className="relative isolate scroll-mt-20 overflow-hidden bg-bidchale-black py-20 text-white sm:py-28">
         <div aria-hidden="true" className="absolute -right-40 top-0 -z-10 h-96 w-96 rounded-full bg-bidchale-yellow/15 blur-[120px]" />
         <div className="container grid gap-14 lg:grid-cols-[1fr_1.2fr]">
           <div>

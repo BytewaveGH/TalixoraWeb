@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { CheckCircleIcon } from '@heroicons/react/24/solid'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { buttonClasses } from '@/components/ui/button'
 import { budgetRanges, developerRoles, enquiryTopics, mailtoLink, site } from '@/content/site'
 import { cn } from '@/lib/cn'
@@ -24,8 +25,10 @@ function topicFromParams(params: URLSearchParams | null): Topic {
   return 'sellix-pos'
 }
 
-const field =
-  'block w-full rounded-xl border-0 bg-white px-4 py-3 text-ink-900 shadow-sm ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 transition focus:outline-none focus:ring-2 focus:ring-brand-500'
+// One shared look for every control so text, height and inset line up exactly.
+const control =
+  'block w-full rounded-xl border-0 bg-white px-4 text-base text-ink-900 shadow-sm ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 transition focus:outline-none focus:ring-2 focus:ring-brand-500'
+const field = cn(control, 'h-12')
 
 /**
  * Contact form. Until a backend endpoint is connected, submitting opens the visitor's
@@ -34,6 +37,10 @@ const field =
 export function ContactForm() {
   const params = useSearchParams()
   const [topic, setTopic] = useState<Topic>(() => topicFromParams(params))
+  // Follow topic links clicked while already on this page (e.g. the quick-route cards).
+  useEffect(() => {
+    setTopic(topicFromParams(params))
+  }, [params])
   const presetRole = params?.get('role') ?? ''
   const [sent, setSent] = useState(false)
 
@@ -75,7 +82,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
+    <form onSubmit={onSubmit} className="space-y-8">
       <fieldset>
         <legend className="text-sm font-medium text-ink-900">What can we help with?</legend>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -83,7 +90,7 @@ export function ContactForm() {
             <label
               key={t.value}
               className={cn(
-                'cursor-pointer rounded-full px-3.5 py-2 text-sm font-medium ring-1 ring-inset transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500',
+                'inline-flex h-9 cursor-pointer items-center rounded-full px-4 text-sm font-medium ring-1 ring-inset transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500',
                 topic === t.value
                   ? 'bg-ink-900 text-white ring-ink-900'
                   : 'bg-white text-slate-600 ring-slate-200 hover:ring-slate-300',
@@ -103,7 +110,7 @@ export function ContactForm() {
         </div>
       </fieldset>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-x-5 gap-y-6 sm:grid-cols-2">
         <Field label="Full name" htmlFor="name">
           <input id="name" name="name" required autoComplete="name" className={field} placeholder="Ama Mensah" />
         </Field>
@@ -116,56 +123,74 @@ export function ContactForm() {
         <Field label="Phone" htmlFor="phone" optional>
           <input id="phone" name="phone" type="tel" autoComplete="tel" className={field} placeholder="+233 …" />
         </Field>
+
+        {topic === 'developer' && (
+          <>
+            <p className="-mb-2 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em] text-brand-600 sm:col-span-2">
+              About the role
+              <span className="h-px flex-1 bg-slate-200" aria-hidden="true" />
+            </p>
+            <Field label="Role needed" htmlFor="role">
+              <Select key={presetRole} id="role" name="role" defaultValue={presetRole}>
+                <option value="">Choose a role…</option>
+                {developerRoles.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <Field label="Engagement" htmlFor="engagement">
+              <Select id="engagement" name="engagement" defaultValue="">
+                <option value="">Choose…</option>
+                <option>Full-time</option>
+                <option>Part-time</option>
+                <option>Fixed-term project</option>
+              </Select>
+            </Field>
+          </>
+        )}
+
+        <Field label="Budget" htmlFor="budget" optional className="sm:col-span-2">
+          <Select id="budget" name="budget" defaultValue="">
+            <option value="">Select a range…</option>
+            {budgetRanges.map((b) => (
+              <option key={b}>{b}</option>
+            ))}
+          </Select>
+        </Field>
+
+        <Field label="Message" htmlFor="message" className="sm:col-span-2">
+          <textarea
+            id="message"
+            name="message"
+            required
+            rows={5}
+            className={cn(control, 'min-h-[8.5rem] resize-y py-3 leading-relaxed')}
+            placeholder="Tell us about your business or project — what you use today, what you need, and any timelines."
+          />
+        </Field>
       </div>
 
-      {topic === 'developer' && (
-        <div className="grid gap-5 rounded-2xl bg-brand-50/60 p-5 ring-1 ring-brand-100 sm:grid-cols-2">
-          <Field label="Role needed" htmlFor="role">
-            <select id="role" name="role" defaultValue={presetRole} className={field}>
-              <option value="">Choose a role…</option>
-              {developerRoles.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Engagement" htmlFor="engagement">
-            <select id="engagement" name="engagement" defaultValue="" className={field}>
-              <option value="">Choose…</option>
-              <option>Full-time</option>
-              <option>Part-time</option>
-              <option>Fixed-term project</option>
-            </select>
-          </Field>
-        </div>
-      )}
-
-      <Field label="Budget" htmlFor="budget" optional>
-        <select id="budget" name="budget" defaultValue="" className={field}>
-          <option value="">Select a range…</option>
-          {budgetRanges.map((b) => (
-            <option key={b}>{b}</option>
-          ))}
-        </select>
-      </Field>
-
-      <Field label="Message" htmlFor="message">
-        <textarea
-          id="message"
-          name="message"
-          required
-          rows={5}
-          className={cn(field, 'resize-y')}
-          placeholder="Tell us about your business or project — what you use today, what you need, and any timelines."
-        />
-      </Field>
-
-      <button type="submit" className={buttonClasses('primary', 'lg', 'w-full')}>
-        Send message
-      </button>
-      <p className="text-center text-xs text-slate-500">We reply within one business day. Happy to sign an NDA on request.</p>
+      <div className="space-y-3 border-t border-slate-100 pt-6">
+        <button type="submit" className={buttonClasses('primary', 'lg', 'w-full')}>
+          Send message
+        </button>
+        <p className="text-center text-xs text-slate-500">We reply within one business day. Happy to sign an NDA on request.</p>
+      </div>
     </form>
+  )
+}
+
+/** Native select styled to match the text inputs exactly (same height, inset and text size). */
+function Select({ className, children, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <div className="relative">
+      <select {...props} className={cn(field, 'cursor-pointer appearance-none pr-11', className)}>
+        {children}
+      </select>
+      <ChevronDownIcon className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+    </div>
   )
 }
 
@@ -173,15 +198,17 @@ function Field({
   label,
   htmlFor,
   optional,
+  className,
   children,
 }: {
   label: string
   htmlFor: string
   optional?: boolean
+  className?: string
   children: React.ReactNode
 }) {
   return (
-    <div>
+    <div className={className}>
       <label htmlFor={htmlFor} className="flex items-baseline justify-between text-sm font-medium text-ink-900">
         {label}
         {optional && <span className="text-xs font-normal text-slate-400">Optional</span>}

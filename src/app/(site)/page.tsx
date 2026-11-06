@@ -17,6 +17,7 @@ import { Section, SectionHeading } from '@/components/ui/section'
 import { Reveal } from '@/components/reveal'
 import { SellixDashboard } from '@/components/mockups/sellix-dashboard'
 import { BidchaleAuction } from '@/components/mockups/bidchale-auction'
+import { getBidchaleLots } from '@/lib/bidchale'
 import { BidchaleLogo, SellixLogo } from '@/components/product-logos'
 import { TeamGrid } from '@/components/team-grid'
 import { CtaBand } from '@/components/cta-band'
@@ -45,7 +46,11 @@ const pillars = [
 
 const valueIcons = [CpuChipIcon, BoltIcon, UserGroupIcon, ShieldCheckIcon]
 
-export default function HomePage() {
+// Re-check Bidchale for new listings every 5 minutes.
+export const revalidate = 300
+
+export default async function HomePage() {
+  const lots = await getBidchaleLots()
   return (
     <>
       {/* ------------------------------------------------------------ Hero */}
@@ -77,32 +82,42 @@ export default function HomePage() {
 
           <Reveal delay={0.15} y={40} className="relative mx-auto mt-16 max-w-5xl sm:mt-20">
             <SellixDashboard />
-            <div className="absolute -bottom-12 -right-4 hidden w-[290px] rotate-[2deg] lg:-right-16 lg:block">
-              <BidchaleAuction compact />
+            <div className="absolute -bottom-12 -right-4 hidden w-[280px] rotate-[2deg] lg:-right-16 lg:block xl:-right-40">
+              <BidchaleAuction compact float lots={lots} />
             </div>
           </Reveal>
         </div>
       </section>
 
       {/* ------------------------------------------------------------ Pillars */}
-      <section aria-label="What we do" className="border-b border-slate-200 bg-white">
-        <div className="container grid divide-y divide-slate-200 md:grid-cols-3 md:divide-x md:divide-y-0">
-          {pillars.map((p, i) => (
-            <Reveal key={p.title} delay={i * 0.06}>
-              <Link href={p.href} className="group flex h-full gap-4 py-8 md:px-8 md:first:pl-0 md:last:pr-0">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-50 text-brand-600 ring-1 ring-brand-100 transition-colors group-hover:bg-brand-500 group-hover:text-white">
-                  <p.icon className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <span>
-                  <span className="flex items-center gap-1 font-display font-semibold text-ink-900">
-                    {p.title}
-                    <ArrowUpRightIcon className="h-4 w-4 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand-600" />
+      <section aria-label="What we do" className="bg-white pt-12 sm:pt-16">
+        <div className="container">
+          <div className="grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft md:grid-cols-3">
+            {pillars.map((p, i) => (
+              <Reveal
+                key={p.title}
+                delay={i * 0.06}
+                className="border-slate-200 [&:not(:first-child)]:border-t md:[&:not(:first-child)]:border-l md:[&:not(:first-child)]:border-t-0"
+              >
+                <Link
+                  href={p.href}
+                  className="group flex h-full flex-col p-7 transition-colors duration-300 hover:bg-slate-50 sm:p-8 lg:p-10"
+                >
+                  <span className="flex items-center justify-between">
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-brand-100 transition-colors duration-300 group-hover:bg-brand-500 group-hover:text-white group-hover:ring-brand-500">
+                      <p.icon className="h-6 w-6" aria-hidden="true" />
+                    </span>
+                    <ArrowUpRightIcon
+                      aria-hidden="true"
+                      className="h-5 w-5 text-slate-300 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand-600"
+                    />
                   </span>
-                  <span className="mt-1 block text-sm leading-relaxed text-slate-600">{p.body}</span>
-                </span>
-              </Link>
-            </Reveal>
-          ))}
+                  <span className="mt-6 font-display text-lg font-semibold tracking-tight text-ink-900">{p.title}</span>
+                  <span className="mt-2 block max-w-xs leading-relaxed text-slate-600">{p.body}</span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -244,7 +259,7 @@ export default function HomePage() {
               />
             </div>
             <div className="absolute -bottom-10 right-4 hidden w-[270px] sm:block lg:-right-8">
-              <BidchaleAuction compact />
+              <BidchaleAuction compact lots={lots} />
             </div>
           </Reveal>
           <div>
@@ -317,7 +332,8 @@ export default function HomePage() {
           </div>
 
           {/* Bento */}
-          <div className="mt-14 grid gap-4 md:grid-cols-6">
+          {/* [&>*]:min-w-0 stops the roles marquee from widening the grid column */}
+          <div className="mt-14 grid gap-4 md:grid-cols-6 [&>*]:min-w-0">
             {/* Dedicated developers — hero tile */}
             <Reveal className="md:col-span-4 md:row-span-2">
               <Link
@@ -441,7 +457,7 @@ export default function HomePage() {
                 const Icon = valueIcons[i]
                 return (
                   <li key={v.title}>
-                    <Reveal delay={i * 0.05} className="group grid grid-cols-[auto_1fr] gap-6 py-8 sm:gap-10 sm:py-10">
+                    <Reveal delay={i * 0.05} className="group grid grid-cols-[3.5rem_1fr] gap-5 py-8 sm:grid-cols-[5.5rem_1fr] sm:gap-8 sm:py-10">
                       <span className="font-display text-5xl font-semibold leading-none tracking-tighter text-slate-300 transition-colors group-hover:text-brand-500 sm:text-6xl">
                         0{i + 1}
                       </span>

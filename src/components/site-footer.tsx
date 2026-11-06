@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Logo } from '@/components/logo'
+import { LogoFull } from '@/components/logo'
 import { links, site } from '@/content/site'
 
 const columns = [
@@ -34,6 +34,8 @@ const columns = [
   {
     title: 'Sign in',
     links: [
+      { label: 'Sellix Eatery', href: links.sellixEatery },
+      { label: 'Sellix Real Estate', href: links.sellixRealEstate },
       { label: 'Sellix workspace', href: links.sellixApp },
       { label: 'Bidchale', href: links.bidchale },
       { label: 'Talixora portal', href: '/signIn' },
@@ -55,7 +57,7 @@ export function SiteFooter() {
       <div className="container py-16 sm:py-20">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_repeat(4,1fr)]">
           <div className="max-w-xs">
-            <Logo tone="light" />
+            <LogoFull tone="light" width={240} />
             <p className="mt-5 text-sm leading-relaxed">
               Business software, online marketplaces and engineering talent — built in {site.location}.
             </p>

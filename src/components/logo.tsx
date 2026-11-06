@@ -1,34 +1,73 @@
+import Image from 'next/image'
 import { cn } from '@/lib/cn'
 
-export function LogoMark({ className }: { className?: string }) {
+/*
+ * Official Talixora logo assets (public/images/brand/talixora):
+ *   mark.png              300×192  — the "T" mark (works on light and dark)
+ *   wordmark.png          757×96   — navy TALIXORA wordmark, for light backgrounds
+ *   wordmark-light.png    757×96   — white wordmark, for dark backgrounds
+ *   logo-full(.png|-light.png) 1200×245 — full lockup with tagline
+ *   logo-original.png     — the original artwork as supplied
+ */
+
+const MARK_RATIO = 300 / 192
+const WORD_RATIO = 757 / 96
+const FULL_RATIO = 1200 / 245
+
+/** The "T" mark on its own. */
+export function LogoMark({ className, height = 32 }: { className?: string; height?: number }) {
   return (
-    <svg viewBox="0 0 32 32" aria-hidden="true" className={cn('h-8 w-8', className)}>
-      <defs>
-        <linearGradient id="tx-g" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#7A7CFB" />
-          <stop offset="1" stopColor="#4B42DE" />
-        </linearGradient>
-      </defs>
-      <rect width="32" height="32" rx="9" fill="url(#tx-g)" />
-      <path d="M9 10.5h14" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" />
-      <path d="M16 10.5v12" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" />
-      <circle cx="23" cy="22.5" r="2.4" fill="#3EDDC0" />
-    </svg>
+    <Image
+      src="/images/brand/talixora/mark.png"
+      alt=""
+      width={Math.round(height * MARK_RATIO)}
+      height={height}
+      priority
+      className={cn('h-auto w-auto shrink-0', className)}
+      style={{ height }}
+    />
   )
 }
 
-export function Logo({ className, tone = 'dark' }: { className?: string; tone?: 'dark' | 'light' }) {
+/** Mark + wordmark lockup used in the header and compact places. */
+export function Logo({
+  className,
+  tone = 'dark',
+  size = 'md',
+}: {
+  className?: string
+  /** dark = navy wordmark for light backgrounds; light = white wordmark for dark backgrounds */
+  tone?: 'dark' | 'light'
+  size?: 'sm' | 'md' | 'lg'
+}) {
+  const markH = size === 'lg' ? 40 : size === 'sm' ? 26 : 32
+  const wordH = Math.round(markH * 0.5)
   return (
     <span className={cn('inline-flex items-center gap-2.5', className)}>
-      <LogoMark />
-      <span
-        className={cn(
-          'font-display text-[1.2rem] font-semibold tracking-[-0.02em]',
-          tone === 'light' ? 'text-white' : 'text-ink-900',
-        )}
-      >
-        Talixora
-      </span>
+      <LogoMark height={markH} />
+      <Image
+        src={tone === 'light' ? '/images/brand/talixora/wordmark-light.png' : '/images/brand/talixora/wordmark.png'}
+        alt="Talixora"
+        width={Math.round(wordH * WORD_RATIO)}
+        height={wordH}
+        priority
+        className="h-auto w-auto"
+        style={{ height: wordH }}
+      />
     </span>
+  )
+}
+
+/** Full logo with the "Building Ideas. Shaping Tomorrow." tagline. */
+export function LogoFull({ className, tone = 'dark', width = 260 }: { className?: string; tone?: 'dark' | 'light'; width?: number }) {
+  return (
+    <Image
+      src={tone === 'light' ? '/images/brand/talixora/logo-full-light.png' : '/images/brand/talixora/logo-full.png'}
+      alt="Talixora — Building Ideas. Shaping Tomorrow."
+      width={width}
+      height={Math.round(width / FULL_RATIO)}
+      className={cn('h-auto', className)}
+      style={{ width }}
+    />
   )
 }

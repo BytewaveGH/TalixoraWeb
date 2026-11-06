@@ -21,6 +21,8 @@ export const site = {
 
 export const links = {
   sellixApp: 'https://sellix.bidchale.com',
+  sellixEatery: 'https://sellix.bidchale.com/en/eat',
+  sellixRealEstate: 'https://sellix.bidchale.com/en/rentals',
   bidchale: 'https://www.bidchale.com',
   bidchaleEmail: 'hello@bidchale.com',
 } as const
@@ -68,22 +70,28 @@ export const sellixModules: {
   summary: string
   image: string
   imageAlt: string
+  /** Live Sellix app for this module (opens in a new tab). */
+  appUrl: string
+  /** Optional supporting photos shown over the main image. */
+  gallery?: { src: string; alt: string }[]
   features: { title: string; body: string }[]
 }[] = [
   {
     key: 'real-estate',
     name: 'Sellix Real Estate',
     short: 'Real Estate',
-    tagline: 'Property management, end to end',
+    tagline: 'Rooms, apartments & rent — tracked',
     summary:
-      'Manage properties, units, tenants and leases in one place — from listing to rent collection and maintenance.',
+      'Track tenants and rent in one place, and list your free rooms and apartments on Sellix Homes — where renters find them and contact you directly.',
     image: '/images/photos/real-estate.jpg',
     imageAlt: 'Modern apartment building with palm trees',
+    appUrl: links.sellixRealEstate,
+    gallery: [{ src: '/images/photos/real-estate-2.jpg', alt: 'Residential towers on a sunny day' }],
     features: [
-      { title: 'Properties & units', body: 'Every property, block and unit, with occupancy at a glance.' },
-      { title: 'Tenants & leases', body: 'Onboard tenants, track lease terms and get renewal reminders.' },
-      { title: 'Rent & arrears', body: 'Automated invoices and reminders with clear arrears reports.' },
-      { title: 'Maintenance', body: 'Log requests, assign vendors and track work orders to completion.' },
+      { title: 'Tenant tracking', body: 'Every room, apartment and tenant in one place, with occupancy at a glance.' },
+      { title: 'Rent tracking', body: 'See who has paid, who is due and what is outstanding — month by month.' },
+      { title: 'List vacancies on Sellix Homes', body: 'Publish free rooms and apartments as tenants move out, straight from your account.' },
+      { title: 'WhatsApp & short stays', body: 'Renters message you on WhatsApp or request a short stay — monthly rent or short lets.' },
     ],
   },
   {
@@ -92,14 +100,19 @@ export const sellixModules: {
     short: 'Eatery',
     tagline: 'Front of house and kitchen, in sync',
     summary:
-      'Run dine-in, takeaway and delivery from one system — orders flow straight to the kitchen and stock updates itself.',
-    image: '/images/photos/eatery-serving.jpg',
-    imageAlt: 'Restaurant team plating food in a busy kitchen',
+      'Your own branded menu, a counter POS and online orders in one system — customers find you on Sellix Eats and order for pickup, delivery or dine-in.',
+    image: '/images/photos/eatery-chef.jpg',
+    imageAlt: 'Chef preparing ingredients in a professional restaurant kitchen',
+    appUrl: links.sellixEatery,
+    gallery: [
+      { src: '/images/photos/eatery-dish.jpg', alt: 'Plate of waakye with spaghetti, gari and egg' },
+      { src: '/images/photos/eatery-cook.jpg', alt: 'Cook grilling chicken at a busy food stand' },
+    ],
     features: [
-      { title: 'Orders, your way', body: 'Dine-in, takeaway and delivery in one queue.' },
-      { title: 'Kitchen routing', body: 'Orders reach the kitchen instantly and update as they’re prepared.' },
-      { title: 'Menus & recipe costing', body: 'Menus with modifiers and ingredient-level stock deduction.' },
-      { title: 'Shift reports', body: 'Cashier, shift and daily sales reports the moment the day closes.' },
+      { title: 'Branded online menu', body: 'Your menu and prices on Sellix Eats, managed by you and always up to date.' },
+      { title: 'Pickup, delivery & dine-in', body: 'Customers order ahead the way they want — every order lands in one queue.' },
+      { title: 'Counter POS', body: 'Take walk-in orders and payments at the counter on the same system.' },
+      { title: 'Daily sales reports', body: 'Orders, sales and best-sellers the moment the day closes.' },
     ],
   },
   {
@@ -111,6 +124,8 @@ export const sellixModules: {
       'A point of sale built for high volume — many tills, many branches and thousands of products without slowing down.',
     image: '/images/photos/pos-checkout.jpg',
     imageAlt: 'Cashier serving customers at a point-of-sale terminal',
+    appUrl: links.sellixApp,
+    gallery: [{ src: '/images/photos/retail-store.jpg', alt: 'Shoppers browsing a well-stocked store aisle' }],
     features: [
       { title: 'Built for volume', body: 'Fast checkout across many tills and branches, even at peak hours.' },
       { title: 'Barcode, batch & expiry', body: 'Track thousands of SKUs with barcodes, batches and expiry dates.' },

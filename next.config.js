@@ -6,6 +6,8 @@ const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR || '.next',
   images: {
     formats: ['image/avif', 'image/webp'],
+    // Live Bidchale listing photos
+    remotePatterns: [{ protocol: 'https', hostname: 'apis.bidchale.com', pathname: '/media/**' }],
   },
   async redirects() {
     return [
